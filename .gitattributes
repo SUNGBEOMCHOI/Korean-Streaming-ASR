@@ -1,0 +1,5 @@
+# Auto detect text files and perform LF normalization
+* text=auto
+checkpoint filter=lfs diff=lfs merge=lfs -text
+*.nemo filter=lfs diff=lfs merge=lfs -text
+*.th filter=lfs diff=lfs merge=lfs -text

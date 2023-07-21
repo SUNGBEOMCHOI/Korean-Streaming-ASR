@@ -1,0 +1,8 @@
+.venv/
+checkpoint/
+whisper/
+nemo_asr/decoders/
+
+pip.txt
+train_manifest.json
+test_manifest.json
