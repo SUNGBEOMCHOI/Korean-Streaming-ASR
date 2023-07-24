@@ -1,0 +1,20 @@
+conda create -n korean_asr python==3.8.10
+conda activate korean_asr
+
+sudo apt-get update
+sudo apt-get install -y libsndfile1 ffmpeg
+sudo apt-get install libffi-dev
+
+if cpu => conda install pytorch torchvision torchaudio cpuonly -c pytorch
+if gpu => conda install pytorch torchvision torchaudio pytorch-cuda=11.8 -c pytorch -c nvidia
+
+pip install Cython
+pip install nemo_toolkit['all']
+pip install PyAudio
+pip install julius
+pip install datasets
+pip install ipywidgets
+pip install --upgrade nbformat
+pip install flask
+pip install Flask-SocketIO
+bash ./nemo_asr/ngram_lm/install_beamsearch_decoders.sh ./nemo_asr

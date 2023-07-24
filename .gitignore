@@ -2,7 +2,8 @@
 checkpoint/
 whisper/
 nemo_asr/decoders/
+__pycache__/
 
-pip.txt
+test.ipynb
 train_manifest.json
 test_manifest.json

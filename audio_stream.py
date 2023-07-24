@@ -1,6 +1,5 @@
 """
 Example code to infer from multiple files
-
 python audio_stream.py \
     --device cuda\
     --inference\
@@ -8,7 +7,11 @@ python audio_stream.py \
     --disable_denoiser\ # if you don't want to use denoiser
     --inference_result_path customer_result_cuda_no_denoiser.txt
 
+Example code to infer from single file
 python  audio_stream.py --audio_path "./audio_example/0001.wav" --device cuda
+
+Example code to infer with microphone
+python audio_stream.py --mode microphone --device cuda
 """
 
 import os
@@ -22,6 +25,7 @@ import json
 from omegaconf import OmegaConf
 
 import numpy as np
+import matplotlib.pyplot as plt
 from tqdm import tqdm
 import pyaudio as pa
 import soundfile as sf
@@ -357,7 +361,7 @@ class DenoiseTranscriber:
                                         buffer_len_in_secs=self.buffer_len_in_secs, 
                                         denoise_dry=self.denoiser_dry)
 
-    def transcribe(self, audio_path=None, manifest_path=None, inference_result_path='inference_result.txt'):
+    def transcribe(self, audio_path=None, manifest_path=None, inference_result_path='inference_result.txt', callback=None):
         if self.mode == 'file':
             if self.inference:
                 assert manifest_path is not None
@@ -385,7 +389,7 @@ class DenoiseTranscriber:
                 print(f"wer: {wer}")
             else:
                 assert audio_path is not None
-                transcription = self.transcribe_single_file(audio_path)
+                transcription = self.transcribe_single_file(audio_path, callback=callback)
 
         elif self.mode == 'microphone':
             # Create an audio object
@@ -421,7 +425,7 @@ class DenoiseTranscriber:
         print(transcription)
         return (in_data, pa.paContinue)
 
-    def transcribe_single_file(self, audio_path=None):
+    def transcribe_single_file(self, audio_path=None, callback=None):
         assert audio_path is not None
         self.asr_decoder.reset()
         samples, length = self.get_samples(audio_path, target_sr=self.sample_rate)
@@ -434,7 +438,11 @@ class DenoiseTranscriber:
                 pass
             else:
                 os.system('cls' if os.name == 'nt' else 'clear')
-                print(transcription)
+                if callback is not None:
+                    callback(transcription)
+                    print('callback')
+                else:
+                    print(transcription)
         if self.denoiser_output_save:
             wav = torch.cat(self.asr_decoder.denoise_buffers, dim=-1)
             wav = wav[:, :length]
@@ -465,8 +473,12 @@ if __name__ == "__main__":
 
     transcriber = DenoiseTranscriber(args)
 
-
     if args.inference:
         transcriber.transcribe(manifest_path=args.manifest_path, inference_result_path=args.inference_result_path)
     else:
-        transcriber.transcribe(audio_path=args.audio_path)
+        if args.mode == 'microphone':
+            transcriber.transcribe()
+        elif args.mode == 'file':
+            transcriber.transcribe(audio_path=args.audio_path)
+        else:
+            raise ValueError(f"Invalid mode: {args.mode}")
