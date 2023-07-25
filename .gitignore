@@ -1,5 +1,4 @@
 .venv/
-checkpoint/Conformer-CTC-BPE.ckpt
 checkpoint/kenlm.tmp.arpa
 whisper/
 nemo_asr/decoders/
