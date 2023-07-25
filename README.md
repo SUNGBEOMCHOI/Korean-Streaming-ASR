@@ -16,7 +16,6 @@ We used denoiser from @[facebook](https://github.com/facebookresearch/denoiser) 
 </div>
 
 
-
 ## Requirements
 Please refer to **[pip.txt](https://github.com/SUNGBEOMCHOI/Korean-Streaming-ASR/blob/main/pip.txt)** for the list of required dependencies
 
@@ -62,7 +61,7 @@ flask run
 </div>
 
 
-**Text**
+**Text (output)**
 <div align="center">
   
 ![스트리밍 gif](https://github.com/SUNGBEOMCHOI/Korean-Streaming-ASR/assets/92682815/97175803-72ed-41dd-8baf-443200bc9022)
@@ -74,6 +73,33 @@ flask run
 ### Datasets
 
 We collect data from [AI Hub](https://aihub.or.kr/)
+
+**Stage 1**
+Speech Enhancement
+
+We initialized denoiser to dns48 (H = 48, trained on DNS dataset, # of Parameters : 18,867,937) and let enhancement module dry output by $\text{dry} \cdot x + (1-\text{dry}) \cdot \hat y$
+We also apply STFT Loss for training the Speech Enhancement model.
+We train the model on 카페,음식점 소음 & 시장, 쇼핑몰 소음 in 소음환경음성인식데이터
+
+**Stage 2**
+Speech to Text
+<div align="center">
+  
+| Name | # of Samples(train/test) |
+| --- | --- |
+| 고객응대음성 | 2067668/21092 |
+| 한국어 음성 | 620000/3000 |
+| 한국인 대화 음성 | 2483570/142399 |
+| 자유대화음성(일반남녀) | 1886882/263371 |
+| 복지 분야 콜센터 상담데이터 | 1096704/206470 |
+| 차량내 대화 데이터 | 2624132/332787 |
+| 명령어 음성(노인남여) | 137467/237469 |
+| Total | 10916423(13946시간)/1206588(1474시간) |
+
+</div>
+
+If you wanna more info, go to [KO STT(in Hunggingface)](https://huggingface.co/SungBeom/stt_kr_conformer_ctc_medium)
+
 
 ---
 ### References
