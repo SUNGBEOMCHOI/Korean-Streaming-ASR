@@ -17,19 +17,59 @@ We used denoiser from @[facebook](https://github.com/facebookresearch/denoiser) 
 
 
 ## Requirements
-Please refer to **[pip.txt](https://github.com/SUNGBEOMCHOI/Korean-Streaming-ASR/blob/main/pip.txt)** for the list of required dependencies
-
-**Clone**
+**Clone the Repository**
 ```bash
 git clone https://github.com/SUNGBEOMCHOI/Korean-Streaming-ASR.git
 cd Korean-Streaming-ASR
 ```
 
+**Make Conda Environment**
+```bash
+conda create -n korean_asr python==3.8.10
+conda activate korean_asr
+```
+
+**Installing Dependencies on Ubuntu**
+```bash
+sudo apt-get update
+sudo apt-get install -y libsndfile1 ffmpeg libffi-dev portaudio19-dev
+```
+
+**Python Dependencies Installation**
+1. Install PyTorch, torchvision, torchaudio, and the CUDA version of PyTorch by following the instructions on the official PyTorch website: https://pytorch.org/get-started/locally/.
+
+2. Install the rest of the required Python packages using pip. Open a terminal and execute the following commands:
+
+```bash
+pip install Cython
+pip install nemo_toolkit['all']==1.21
+pip install PyAudio
+pip install julius
+pip install datasets
+pip install ipywidgets
+pip install --upgrade nbformat
+pip install flask
+pip install Flask-SocketIO
+```
+
+**Download Denoiser and ASR Models**
+From the provided Google Drive link, download **denoiser.th**, **Conformer-CTC-BPE.nemo**.
+If you wish to train the ASR model, also download Conformer-CTC-BPE.ckpt. 
+Create a folder named **checkpoint** and place the downloaded files in it.
+
+Google Drive Folder: [Download Here](https://drive.google.com/drive/folders/1Adv8kYXV1XGGoLY1XA36EI38kfk0r0WZ?usp=drive_link)
 
 ## Run
 **File mode**
+
+For CPU:
 ```bash
 python  audio_stream.py --audio_path "./audio_example/0001.wav" --device cpu
+```
+
+For GPU:
+```bash
+python  audio_stream.py --audio_path "./audio_example/0001.wav" --device cuda
 ```
 
 **Microphone mode**
