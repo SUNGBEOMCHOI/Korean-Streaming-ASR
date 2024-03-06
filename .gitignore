@@ -2,6 +2,7 @@
 checkpoint/kenlm.tmp.arpa
 whisper/
 nemo_asr/decoders/
+decoders/
 __pycache__/
 
 test.ipynb

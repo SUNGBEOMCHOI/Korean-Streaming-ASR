@@ -2,13 +2,13 @@ conda create -n korean_asr python==3.8.10
 conda activate korean_asr
 
 sudo apt-get update
-sudo apt-get install -y libsndfile1 ffmpeg libffi-dev
+sudo apt-get install -y libsndfile1 ffmpeg libffi-dev portaudio19-dev
 
-if cpu => conda install pytorch torchvision torchaudio cpuonly -c pytorch
-if gpu => conda install pytorch torchvision torchaudio pytorch-cuda=11.8 -c pytorch -c nvidia
+# download pytorch torchvision torchaudio pytorch-cuda
+https://pytorch.org/get-started/locally/
 
 pip install Cython
-pip install nemo_toolkit['all']
+pip install nemo_toolkit['all']==1.21
 pip install PyAudio
 pip install julius
 pip install datasets
