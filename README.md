@@ -53,9 +53,8 @@ pip install Flask-SocketIO
 ```
 
 **Download Denoiser and ASR Models**
-From the provided Google Drive link, download **denoiser.th**, **Conformer-CTC-BPE.nemo**.
-If you wish to train the ASR model, also download Conformer-CTC-BPE.ckpt. 
-Create a folder named **checkpoint** and place the downloaded files in it.
+1. From the provided Google Drive link, download **denoiser.th**, **Conformer-CTC-BPE.nemo**. If you wish to train the ASR model, also download Conformer-CTC-BPE.ckpt.
+2. Create a folder named **checkpoint** and place the downloaded files in it.
 
 Google Drive Folder: [Download Here](https://drive.google.com/drive/folders/1Adv8kYXV1XGGoLY1XA36EI38kfk0r0WZ?usp=drive_link)
 
