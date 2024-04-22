@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: #f0f0f0;
+    }
+    
+    h1 {
+        background-color: #333;
+        color: white;
+        padding: 10px 0;
+        margin: 0;
+        text-align: center;
+    }
+    
+    button {
+        margin: 5px;
+        padding: 10px 20px;
+        font-size: 15px;
+    }
+    
+    #fileUploadContainer, #microphoneContainer {
+        margin: 20px;
+        padding: 20px;
+        border-radius: 5px;
+        background-color: #fff;
+        box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    
+    #transcription {
+        margin: 20px;
+        padding: 20px;
+        border-radius: 5px;
+        background-color: #fff;
+        box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        height: 200px;
+        overflow-y: scroll;
+        font-family: monospace;
+        white-space: pre-wrap;
+    }
+</style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/3.1.3/socket.io.js"></script>
+<script type="text/javascript" charset="utf-8">
+    window.onload = function() {
+        var socket = io();
+        var intervalId;
+        
+        socket.on('transcription result', function(data) {
+            document.getElementById('transcription').textContent = data.transcription;
+        });
+
+        function uploadFile(file, callback) {
+            var xhr = new XMLHttpRequest();
+            var formData = new FormData();
+            formData.append('file', file);
+            
+            xhr.open('POST', '/upload', true);
+            xhr.onload = function() {
+                if (xhr.status === 200) {
+                    callback();
+                } else {
+                    console.error('An error occurred during the file upload.');
+                }
+            };
+            xhr.send(formData);
+        }
+
+        document.getElementById('fileMode').addEventListener('click', function() {
+            document.getElementById('fileUploadContainer').style.display = 'block';
+            document.getElementById('microphoneContainer').style.display = 'none';
+            document.getElementById('transcription').textContent = '';
+        });
+
+        document.getElementById('microphoneMode').addEventListener('click', function() {
+            document.getElementById('fileUploadContainer').style.display = 'none';
+            document.getElementById('microphoneContainer').style.display = 'block';
+            document.getElementById('transcription').textContent = '';
+        });
+
+        document.getElementById('audioFile').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            const audioPlayer = document.getElementById('audioPlayer');
+            audioPlayer.src = URL.createObjectURL(file);
+            audioPlayer.load();
+            audioPlayer.play();
+            uploadFile(file, function() {
+                socket.emit('start transcription', {audio_path: './uploads/' + file.name});
+            });
+        });
+
+        var mediaRecorder;
+        var recordedChunks = [];
+
+        navigator.mediaDevices.getUserMedia({audio: true}).then(function(stream) {
+            mediaRecorder = new MediaRecorder(stream);
+            mediaRecorder.ondataavailable = handleDataAvailable;
+        }).catch(function(err) {
+            alert('No microphone found.');
+        });
+
+        function handleDataAvailable(event) {
+            if (event.data.size > 0) {
+                recordedChunks.push(event.data);
+                var reader = new FileReader();
+                reader.onload = function(evt) {
+                    var buf = new Int16Array(evt.target.result);
+                    socket.emit('audio stream', buf.buffer);
+                };
+                reader.readAsArrayBuffer(event.data);
+            } else {
+                // ...
+            }
+        }
+
+
+        document.getElementById('recordButton').addEventListener('click', function() {
+            if (mediaRecorder.state === 'recording') {
+                mediaRecorder.stop();
+                this.textContent = 'Record';
+                clearInterval(intervalId);
+            } else {
+                mediaRecorder.start();
+                this.textContent = 'Stop';
+                intervalId = setInterval(() => {
+                    this.style.backgroundColor = this.style.backgroundColor == 'red' ? 'transparent' : 'red';
+                }, 500);
+            }
+        });
+    }
+</script>    
+</head>
+<body>
+    <h1>ASR Demo</h1>
+
+    <button id="fileMode">File Mode</button>
+    <button id="microphoneMode">Microphone Mode</button>
+
+    <div id="fileUploadContainer" style="display:none;">
+        <input type="file" id="audioFile" accept="audio/*">
+        <audio id="audioPlayer" controls></audio>
+    </div>
+
+    <div id="microphoneContainer" style="display:none;">
+        <button id="recordButton">Record</button>
+    </div>
+
+    <p id="transcription"></p>
+</body>
+</html>

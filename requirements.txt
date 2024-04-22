@@ -1,0 +1,9 @@
+Cython
+nemo_toolkit[all]==1.21
+PyAudio
+julius
+datasets
+ipywidgets
+nbformat
+flask
+Flask-SocketIO

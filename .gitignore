@@ -1,5 +1,5 @@
 .venv/
-checkpoint/kenlm.tmp.arpa
+checkpoint
 whisper/
 nemo_asr/decoders/
 decoders/
