@@ -63,17 +63,17 @@ Google Drive Folder: [Download Here](https://drive.google.com/drive/folders/1Adv
 
 For CPU:
 ```bash
-python  audio_stream.py --audio_path "./audio_example/0001.wav" --device cpu
+python  main.py --audio_path "./audio_example/0001.wav" --device cpu
 ```
 
 For GPU:
 ```bash
-python  audio_stream.py --audio_path "./audio_example/0001.wav" --device cuda
+python  main.py --audio_path "./audio_example/0001.wav" --device cuda
 ```
 
 **Microphone mode**
 ```bash
-python audio_stream.py --mode microphone --device cpu
+python main.py --mode microphone --device cpu
 ```
 
 **Web**
