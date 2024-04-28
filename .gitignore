@@ -1,10 +1,3 @@
-.venv/
 checkpoint
-whisper/
-nemo_asr/decoders/
-decoders/
 __pycache__/
-
-test.ipynb
-train_manifest.json
-test_manifest.json
+web/

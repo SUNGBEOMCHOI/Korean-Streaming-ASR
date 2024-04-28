@@ -16,11 +16,10 @@ import nemo.collections.asr as nemo_asr
 from nemo.collections.asr.metrics.wer import word_error_rate
 
 import sys
-# 상위 폴더 경로
+# denoiser/denoiser 폴더 경로
 denoiser_directory = os.path.abspath(os.path.dirname(os.path.dirname(__file__)))
 denoiser_directory = os.path.join(denoiser_directory, 'denoiser')
 sys.path.append(denoiser_directory)
-print(denoiser_directory)
 from denoiser import pretrained
 
 from .audio_dataset import AudioDataset
@@ -132,15 +131,19 @@ class DenoiseTranscriber:
             self.microphone.run()
             self.microphone.close()
                 
-    def transcribe_microphone_data(self, in_data, frame_count, time_info, status):
+    def transcribe_microphone_data(self, in_data, frame_count=None, time_info=None, status=None, callback=None):
         signal = np.frombuffer(in_data, dtype=np.int16)
-        self.sampbuffer[:-self.chunk_len] = self.sampbuffer[self.chunk_len:]
-        self.sampbuffer[-self.chunk_len:] = signal
+        self.sampbuffer[:-len(signal)] = self.sampbuffer[len(signal):]
+        self.sampbuffer[-len(signal):] = signal
         transcription = self.asr_decoder.transcribe_signal(self.sampbuffer)
         os.system('cls' if os.name =='nt' else 'clear')
-        print("Press 'q' and Enter to stop the microphone: ")
-        print(transcription)
-        return (in_data, pa.paContinue)
+        if callback is not None:
+            callback(transcription)
+            print(transcription)
+        else:
+            print("Press 'q' and Enter to stop the microphone: ")
+            print(transcription)
+            return (in_data, pa.paContinue)
 
     def transcribe_single_file(self, audio_path=None, callback=None):
         assert audio_path is not None
@@ -157,9 +160,7 @@ class DenoiseTranscriber:
                 os.system('cls' if os.name == 'nt' else 'clear')
                 if callback is not None:
                     callback(transcription)
-                    print('callback')
-                else:
-                    print(transcription)
+                print(transcription)
         if self.denoiser_output_save:
             wav = torch.cat(self.asr_decoder.denoise_buffers, dim=-1)
             wav = wav[:, :length]
