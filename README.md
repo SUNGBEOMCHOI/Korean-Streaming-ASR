@@ -41,15 +41,7 @@ sudo apt-get install -y libsndfile1 ffmpeg libffi-dev portaudio19-dev
 2. Install the rest of the required Python packages using pip. Open a terminal and execute the following commands:
 
 ```bash
-pip install Cython
-pip install nemo_toolkit['all']==1.21
-pip install PyAudio
-pip install julius
-pip install datasets
-pip install ipywidgets
-pip install --upgrade nbformat
-pip install flask
-pip install Flask-SocketIO
+pip install -r requirements.txt
 ```
 
 **Download Denoiser and ASR Models**
@@ -71,14 +63,19 @@ For GPU:
 python  main.py --audio_path "./audio_example/0001.wav" --device cuda
 ```
 
+Save Denoised Audio:
+```bash
+python  main.py --audio_path "./audio_example/0001.wav" --device cuda --denoiser_output_save
+```
+
+Disable Denoiser(Only ASR):
+```bash
+python  main.py --audio_path "./audio_example/0001.wav" --device cuda --disable_denoiser
+```
+
 **Microphone mode**
 ```bash
 python main.py --mode microphone --device cpu
-```
-
-**Web**
-```
-flask run
 ```
 
 ---
